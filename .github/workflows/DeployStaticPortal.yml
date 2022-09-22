@@ -19,10 +19,15 @@ jobs:
       
     - name: Zip files
       run: zip -qq -r portal-input.zip . -x admin-APIMATIC-BUILD.json
+
+    - name: Call build endpoint
+      run: curl -X POST --url 'https://www.apimatic.io/api/portal' -H 'Authorization:X-Auth-Key ${{ secrets.API_KEY }}' -F 'file=@portal-input.zip' -o portal-output.zip
+      
+    - name: list 
+      run: ls
       
     - name: Extract generated Portal
       run: unzip -qq portal-input.zip -d static-portal
       
     - name: list 
-      run: cd static-portal 
-          ls
+      run: ls
