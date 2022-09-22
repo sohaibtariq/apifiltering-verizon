@@ -1,0 +1,56 @@
+name: Deploy Role based filtering
+
+on:
+  workflow_dispatch:  
+  push:
+    branches: 
+      - main
+      
+jobs:
+  Forrole2:
+    runs-on: ubuntu-latest
+
+    steps:
+ 
+    - uses: actions/checkout@v1
+      name : checkout-repo
+      id: checkout-repo  
+      
+    - name: Zip files
+      run: zip -qq -r portal-input.zip -x admin-APIMATIC-BUILD.json
+
+    - name: Call build endpoint
+      run: curl -X POST --url 'https://www.apimatic.io/api/portal' -H 'Authorization:X-Auth-Key ${{ secrets.API_KEY }}' -F 'file=@portal-input.zip' -o portal-output.zip
+      
+    - name: list 
+      run: ls
+      
+    - name: Extract generated Portal
+      run: unzip -qq portal-output.zip -d static-portal
+      
+    - name: list 
+      run: ls
+
+  forrole2:
+    runs-on: ubuntu-latest
+
+    steps:
+ 
+    - uses: actions/checkout@v1
+      name : checkout-repo
+      id: checkout-repo  
+      
+    - name: Zip files
+      run: zip -qq -r portal-input.zip -x admin-APIMATIC-BUILD.json
+
+    - name: Call build endpoint
+      run: curl -X POST --url 'https://www.apimatic.io/api/portal' -H 'Authorization:X-Auth-Key ${{ secrets.API_KEY }}' -F 'file=@portal-input.zip' -o portal-output.zip
+      
+    - name: list 
+      run: ls
+      
+    - name: Extract generated Portal
+      run: unzip -qq portal-output.zip -d static-portal
+      
+    - name: list 
+      run: ls
