@@ -7,7 +7,7 @@ on:
       - main
       
 jobs:
-  Forrole2:
+  forrole:
     runs-on: ubuntu-latest
 
     steps:
