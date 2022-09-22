@@ -1,0 +1,27 @@
+{
+  "toc": [
+    {
+      "group": "Guides",
+      "slug": "guides",
+      "items": [
+        {
+          "generate": "Getting Started",
+          "from": "getting-started"
+        },
+        {
+          "page": "APIMatic Calculator",
+          "file": "calc.md",
+          "slug": "calc"
+        }
+      ]
+    },
+    {
+      "generate": "API Endpoints",
+      "from": "endpoints"
+    },
+    {
+      "generate": "Models",
+      "from": "models"
+    }
+  ]
+}
