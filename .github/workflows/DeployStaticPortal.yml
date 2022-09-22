@@ -1,32 +1,28 @@
 name: Deploy Static Portal
 
+
 on:
   workflow_dispatch:  
   push:
     branches: 
-      - main 
-      
+      - main
+
 jobs:
   generate-portal:
     runs-on: ubuntu-latest
-
+ 
     steps:
-       
+
     - uses: actions/checkout@v1
       name : checkout-repo
       id: checkout-repo  
       
     - name: Zip files
-      run: zip -qq -r portal-input.zip 
-      
-    - name: Call build endpoint
-      run: curl -X POST --url 'https://www.apimatic.io/api/portal' -H 'Authorization:X-Auth-Key ${{ secrets.API_KEY }}' -F 'file=@portal-input.zip' -o output.zip
-      
-    - name: list 
-      run: ls
+      run: zip -qq -r portal-input.zip . -x admin-APIMATIC-BUILD.json
       
     - name: Extract generated Portal
-      run: unzip -qq output.zip -d static-portal
+      run: unzip -qq portal-input.zip -d static-portal
       
     - name: list 
-      run: ls
+      run: cd static-portal 
+          ls
