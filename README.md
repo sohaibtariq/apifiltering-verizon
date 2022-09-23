@@ -1,4 +1,4 @@
-This repository demonstrates how APIMatic's [portal generation API](https://portal-api-docs.apimatic.io/#/http/generating-api-portal/build-file-reference) can be used to automate the generation of Developer Portals via CI/CD.
+This repository demonstrates how APIMatic's [Filtering API by Roles](https://portal-api-docs.apimatic.io/#/http/generating-api-portal/filtering-api-by-roles) can be used to automate the generation of Role based Developer Portals via CI/CD.
 
 ## APIMatic Portal Generation API   
   
@@ -9,7 +9,8 @@ The Portal Generation API allows the entire Documentation Portal to be managed v
 The Portal Generation API expects these files to be provided as a ZIP archive, with the following directory structure:
 
 ```
-APIMATIC-BUILD.json
+admin-APIMATIC-BUILD.json
+user-APIMATIC-BUILD.json
 spec\
   openapi.json
 content\
