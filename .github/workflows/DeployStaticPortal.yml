@@ -27,7 +27,7 @@ jobs:
       run: ls
       
     - name: Extract generated Portal
-      run: unzip -qq portal-input.zip -d static-portal
+      run: unzip -qq portal-output.zip -d static-portal
       
     - name: list 
       run: ls
@@ -60,7 +60,7 @@ jobs:
       run: ls
       
     - name: Extract generated Portal
-      run: unzip -qq role2-input.zip -d static-portal2
+      run: unzip -qq role2-output.zip -d static-portal2
       
     - name: list 
       run: ls
@@ -71,4 +71,4 @@ jobs:
       with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages publish static-portal --branch=main --project-name=apifiltering
+          command: pages publish static-portal2 --branch=main --project-name=apifiltering
