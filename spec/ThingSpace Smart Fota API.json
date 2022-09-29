@@ -1,0 +1,2320 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "ThingSpace Smart FOTA API",
+    "license": {
+      "name": "Verizon Terms of Service",
+      "url": "https://thingspace.verizon.com/legal/terms-of-service.html"
+    },
+    "description": "ThingSpace Smart Firmware Over The Air (FOTA) service API. You can also <a href=\"/content/dam/thingspace-portal/resources/documentation/swagger/app_fota_api_v3-1.json\" download>download the JSON file here</a>.",
+    "version": "v3.1"
+  },
+  "x-roles": [
+    {
+      "name": "Public Endpoints",
+      "id": "admin",
+      "tags": [
+        "pet"
+      ],
+      "description": "This role only allows endpoints that should be visible to the public."
+    },
+    {
+      "name": "Private Endpoints",
+      "id": "user",
+      "tags": [
+        "pri"
+      ],
+      "description": "This role only allows endpoints that should be visible to the public."
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://{host}/fota/v3"
+    }
+  ],
+  "tags": [
+    {
+      "name": "subscriptions",
+      "description": "Information about current FOTA subscriptions"
+    },
+    {
+      "name": "licenses",
+      "description": "License status and assignment"
+    },
+    {
+      "name": "campaigns",
+      "description": "Schedule, retreive or cancel scheduled FOTA campaigns"
+    },
+    {
+      "name": "reports",
+      "description": "Status of a campaign per device"
+    },
+    {
+      "name": "firmware",
+      "description": "State of Firmware across devices in the account"
+    },
+    {
+      "name": "devices",
+      "description": "Device information for an account"
+    },
+    {
+      "name": "callbacks",
+      "description": "Find registered callbacks or create, update and delete a registered callback"
+    }
+  ],
+  "paths": {
+    "/subscriptions/{acc}": {
+      "get": {
+        "tags": [
+          "subscriptions", "admin"
+        ],
+        "summary": "Get a fota subscription",
+        "description": "This endpoint retrieves a fota subscription by account",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fota Subscription",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/licenses/{acc}": {
+      "get": {
+        "tags": [
+          "licenses", "user", "admin"
+        ],
+        "summary": "Summarize fota licenses assignment",
+        "description": "The endpoint allows user to list license usage",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lastSeenDeviceId",
+            "in": "query",
+            "description": "Last seen device identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Summary of license assignment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LicenseSummary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/licenses/{acc}/assign": {
+      "post": {
+        "tags": [
+          "licenses", "user", "admin"
+        ],
+        "summary": "Assign fota licenses to devices",
+        "description": "This endpoint allows user to assign licenses to a list of devices",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "License assignment",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LicenseIMEI"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "License assignment result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LicenseResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "license"
+      }
+    },
+    "/licenses/{acc}/remove": {
+      "post": {
+        "tags": [
+          "licenses", "user", "admin"
+        ],
+        "summary": "Remove licenses from devices",
+        "description": "This endpoint allows user to remove licenses from a list of devices",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "License assignment",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LicenseIMEI"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "License removal result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LicenseResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "license"
+      }
+    },
+    "/campaigns/firmware/{acc}": {
+      "post": {
+        "tags": [
+          "campaigns", "user", "admin"
+        ],
+        "summary": "Schedule a firmware upgrade",
+        "description": "This endpoint allows a user to schedule a firmware upgrade for a list of devices",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Firmware upgrade information",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampaignFirmwareUpgrade"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Return upgrade information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FirmwareCampaign"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "firmwareUpgrade"
+      }
+    },
+    "/campaigns/firmware/{acc}/{campaignId}": {
+      "put": {
+        "tags": [
+          "campaigns", "user", "admin"
+        ],
+        "summary": "Add or Remove devices to an existing firmware campaign. This api is allowed before the campaign StartDate",
+        "description": "This endpoint allows user to Add or Remove devices to an existing campaign",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "campaignId",
+            "in": "path",
+            "description": "firmware upgrade information",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Add or remove device to existing upgrade information",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddOrRemoveDeviceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns add or remove devices to existing upgrade information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddOrRemoveDeviceResp"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "addOrRemoveDevice"
+      }
+    },
+    "/campaigns/firmware/{acc}/{campaignId}/dates": {
+      "put": {
+        "tags": [
+          "campaigns", "user", "admin"
+        ],
+        "summary": "Change firmware campaign dates and time windows. This api is allowed before the campaign StartDate",
+        "description": "This endpoint allows user to change campaign dates and time windows. Fields which need to remain unchanged should be also provided",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "campaignId",
+            "in": "path",
+            "description": "Firmware upgrade information",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "New dates and time windows",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeCampaignDatesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Updated campaign information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FirmwareCampaign"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "changeCampaignDates"
+      }
+    },
+    "/campaigns/{acc}/{campaignId}": {
+      "get": {
+        "tags": [
+          "campaigns", "user", "admin"
+        ],
+        "summary": "Retrieve campaign level information",
+        "description": "This endpoint allows the user to retrieve campaign level information for a specified campaign",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "campaignId",
+            "in": "path",
+            "description": "Firmware upgrade identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns firmware upgrade information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Campaign"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "campaigns", "user", "admin"
+        ],
+        "summary": "Cancel a previously scheduled firmware campaign. This api is allowed before the campaign StartDate",
+        "description": "This endpoint allows user to cancel a firmware campaign. A firmware campaign already started can not be cancelled",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "campaignId",
+            "in": "path",
+            "description": "Firmware upgrade information",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns cancellation status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reports/{acc}/firmware/campaigns": {
+      "get": {
+        "tags": [
+          "reports", "user", "admin"
+        ],
+        "summary": "Get firmware campaign status",
+        "description": "Retrieve a list of campaigns for an account that have a specified campaign status",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "campaignStatus",
+            "in": "query",
+            "description": "Campaign status",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lastSeenCampaignId",
+            "in": "query",
+            "description": "Last seen campaign Id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return array of campaign history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignHistory"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reports/{acc}/devices/{deviceId}": {
+      "get": {
+        "tags": [
+          "reports", "user", "admin"
+        ],
+        "summary": "Get device campaign history",
+        "description": "Retrieve campaign history for a specific device",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceId",
+            "in": "path",
+            "description": "Device IMEI identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns an array of firmware upgrades",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeviceFirmwareUpgrade"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reports/{acc}/campaigns/{campaignId}/devices": {
+      "get": {
+        "tags": [
+          "reports", "user", "admin"
+        ],
+        "summary": "Get a campaign device status",
+        "description": "Retrieve a list of all devices in a campaign and the status of each device",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "campaignId",
+            "in": "path",
+            "description": "Campaign identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lastSeenDeviceId",
+            "in": "query",
+            "description": "Last seen device identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns an array of campaign history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignDevice"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/firmware/{acc}": {
+      "get": {
+       "tags": [
+          "firmware", "user", "admin"
+        ],
+        "summary": "Get a list of available firmware",
+        "description": "This endpoint allows user to list the firmware of an account",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "protocol",
+            "in": "query",
+            "description": "Filter to retrieve a specific protocol type used",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "LWM2M",
+              "enum": [
+                "LWM2M",
+                "OMD-DM",
+                "all"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns an array of firmware objects",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FirmwarePackage"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/firmware/{acc}/devices": {
+      "put": {
+       "tags": [
+          "firmware", "user", "admin"
+        ],
+        "summary": "synchronize device firmware",
+        "description": "Synchronize ThingSpace with the FOTA server for up to 100 devices",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "DeviceIds to get firmware info synchronously",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FirmwareIMEI"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Device Firmware Information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceFirmwareList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "deviceIds"
+      }
+    },
+    "/firmware/{acc}/async/{deviceId}": {
+      "put": {
+       "tags": [
+          "firmware", "user", "admin"
+        ],
+        "summary": "Report device firmware (asynchronous)",
+        "description": "Ask a device to report its firmware version asynchronously",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceId",
+            "in": "path",
+            "description": "Device identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Device firmware version update request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateDeviceFirmwareVersionResp"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/devices/{acc}": {
+      "get": {
+        "tags": [
+          "devices", "user", "admin"
+        ],
+        "summary": "Get account device information",
+        "description": "Retrieve account device information such as reported firmware on the devices",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lastSeenDeviceId",
+            "in": "query",
+            "description": "Last seen device identifier",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "protocol",
+            "in": "query",
+            "description": "Filter to retrieve a specific protocol type used",
+            "schema": {
+              "type": "string",
+              "default": "LWM2M",
+              "enum": [
+                "LWM2M",
+                "OMD-DM",
+                "HTTP"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns an array of devices",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountDeviceList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "devices", "user", "admin"
+        ],
+        "summary": "Get account device information for a list of devices",
+        "description": "Retrieve device information for a list of devices on an account",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Request device list information",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceIMEI"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Get device list information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "devicelist"
+      }
+    },
+    "/callbacks/{acc}": {
+      "get": {
+        "tags": [
+          "callbacks", "user", "admin"
+        ],
+        "summary": "Get the registered callback information",
+        "description": "This endpoint allows user to get the registered callback information",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return callback registration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CallbackSummary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "callbacks", "user", "admin"
+        ],
+        "summary": "Update HTTPS callback address",
+        "description": "This endpoint allows the user to update the HTTPS callback address",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Callback Url registration",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CallbackRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Return callback registration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CallbackResp"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "callback"
+      },
+      "post": {
+        "tags": [
+          "callbacks", "user", "admin"
+        ],
+        "summary": "Create HTTPS callback address",
+        "description": "This endpoint allows the user to create the HTTPS callback address",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Callback Url registration",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CallbackRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Return callback registration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CallbackResp"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "callback"
+      },
+      "delete": {
+        "tags": [
+          "callbacks", "user", "admin"
+        ],
+        "summary": "Delete a previously registered Callback",
+        "description": "This endpoint allows user to delete a previously registered callback URL",
+        "parameters": [
+          {
+            "name": "acc",
+            "in": "path",
+            "description": "Account identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete request result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AddOrRemoveDeviceRequest": {
+        "required": [
+          "Type",
+          "deviceList"
+        ],
+        "type": "object",
+        "properties": {
+          "Type": {
+            "type": "string",
+            "description": "Operation either 'append' or 'remove'"
+          },
+          "deviceList": {
+            "type": "array",
+            "description": "device IMEI list",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AddOrRemoveDeviceResp": {
+        "required": [
+          "accountName",
+          "campaignId",
+          "deviceList"
+        ],
+        "type": "object",
+        "properties": {
+          "accountName": {
+            "type": "string",
+            "description": "Account identifier"
+          },
+          "campaignId": {
+            "type": "string",
+            "description": "Campaign identifier"
+          },
+          "deviceList": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "deviceId": {
+                  "type": "string",
+                  "description": "Device IMEI"
+                },
+                "status": {
+                  "type": "string",
+                  "description": "success or failure"
+                },
+                "Reason": {
+                  "type": "string",
+                  "description": "result reason"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ChangeCampaignDatesRequest": {
+        "required": [
+          "endDate",
+          "startDate"
+        ],
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "description": "Campaign start date",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Campaign end date",
+            "format": "date"
+          },
+          "campaignTimeWindowList": {
+            "type": "array",
+            "description": "List of allowed campaign time windows",
+            "items": {
+              "$ref": "#/components/schemas/TimeWindow"
+            }
+          }
+        }
+      },
+      "TimeWindow": {
+        "required": [
+          "endTime",
+          "startTime"
+        ],
+        "type": "object",
+        "properties": {
+          "startTime": {
+            "type": "integer",
+            "description": "Start hour in range [0..23], current hour >= startTime"
+          },
+          "endTime": {
+            "type": "integer",
+            "description": "End hour in range [1..24], current hour < endTime"
+          }
+        }
+      },
+      "Subscription": {
+        "type": "object",
+        "properties": {
+          "accountName": {
+            "type": "string",
+            "description": "Account identifier in \"##########-#####\""
+          },
+          "purchaseType": {
+            "type": "string",
+            "description": "Subscription models used by the account"
+          },
+          "licenseCount": {
+            "type": "integer",
+            "description": "Number of monthly licenses in an MRC subscription"
+          },
+          "licenseUsedCount": {
+            "type": "integer",
+            "description": "Number of licenses currently assigned to devices"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "The date and time of when the subscription was last updated",
+            "format": "date-time"
+          }
+        }
+      },
+      "LicenseSummary": {
+        "required": [
+          "accountName",
+          "assignedLicenses",
+          "hasMoreData",
+          "maxPageSize"
+        ],
+        "type": "object",
+        "properties": {
+          "accountName": {
+            "type": "string",
+            "description": "Account identifier"
+          },
+          "totalLicense": {
+            "type": "integer",
+            "description": "Total fota license count"
+          },
+          "assignedLicenses": {
+            "type": "integer",
+            "description": "Assigned fota license count"
+          },
+          "hasMoreData": {
+            "type": "boolean",
+            "description": "True if there are more devices to retrieve"
+          },
+          "lastSeenDeviceId": {
+            "type": "string",
+            "description": "Last seen device identifier"
+          },
+          "maxPageSize": {
+            "type": "integer",
+            "description": "Maximum page size"
+          },
+          "deviceList": {
+            "type": "array",
+            "description": "Device IMEI list",
+            "items": {
+              "$ref": "#/components/schemas/LicenseDevice"
+            }
+          }
+        }
+      },
+      "LicenseDevice": {
+        "required": [
+          "deviceId"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string",
+            "description": "Device IMEI"
+          },
+          "assignmentTime": {
+            "type": "string",
+            "description": "License assignment time"
+          }
+        }
+      },
+      "LicenseResponse": {
+        "required": [
+          "accountName",
+          "deviceList",
+          "licTotalCount",
+          "licUsedCount"
+        ],
+        "type": "object",
+        "properties": {
+          "accountName": {
+            "type": "string",
+            "description": "Account name"
+          },
+          "licTotalCount": {
+            "type": "integer",
+            "description": "Total license count"
+          },
+          "licUsedCount": {
+            "type": "integer",
+            "description": "Assigned license count"
+          },
+          "deviceList": {
+            "type": "array",
+            "description": "List of devices with id in IMEI",
+            "items": {
+              "$ref": "#/components/schemas/DeviceStatus"
+            }
+          }
+        }
+      },
+      "LicenseIMEI": {
+        "required": [
+          "deviceList"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceList": {
+            "type": "array",
+            "description": "device IMEI list",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CampaignFirmwareUpgrade": {
+        "required": [
+          "deviceList",
+          "endDate",
+          "firmwareFrom",
+          "firmwareName",
+          "firmwareTo",
+          "protocol",
+          "startDate"
+        ],
+        "type": "object",
+        "properties": {
+          "campaignName": {
+            "type": "string",
+            "description": "Campaign name"
+          },
+          "firmwareName": {
+            "type": "string",
+            "description": "Firmware name to upgrade to"
+          },
+          "firmwareFrom": {
+            "type": "string",
+            "description": "Old firmware version"
+          },
+          "firmwareTo": {
+            "type": "string",
+            "description": "New firmware version"
+          },
+          "protocol": {
+            "type": "string",
+            "default": "LWM2M"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Campaign start date",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Campaign end date",
+            "format": "date"
+          },
+          "campaignTimeWindowList": {
+            "type": "array",
+            "description": "List of allowed campaign time windows",
+            "items": {
+              "$ref": "#/components/schemas/TimeWindow"
+            }
+          },
+          "deviceList": {
+            "type": "array",
+            "description": "device IMEI list",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "FirmwareCampaign": {
+        "required": [
+          "accountName",
+          "endDate",
+          "firmwareFrom",
+          "firmwareTo",
+          "id",
+          "make",
+          "model",
+          "protocol",
+          "startDate",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Upgrade identifier"
+          },
+          "accountName": {
+            "type": "string",
+            "description": "Account identifier"
+          },
+          "campaignName": {
+            "type": "string",
+            "description": "Campaign name"
+          },
+          "firmwareName": {
+            "type": "string",
+            "description": "Firmware name (for firmware upgrade only)"
+          },
+          "firmwareFrom": {
+            "type": "string",
+            "description": "Old firmware version (for firmware upgrade only)"
+          },
+          "firmwareTo": {
+            "type": "string",
+            "description": "New firmware version (for firmware upgrade only)"
+          },
+          "protocol": {
+            "type": "string",
+            "default": "LWM2M"
+          },
+          "make": {
+            "type": "string",
+            "description": "make"
+          },
+          "model": {
+            "type": "string",
+            "description": "model"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Campaign start date",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Campaign end date",
+            "format": "date"
+          },
+          "campaignTimeWindowList": {
+            "type": "array",
+            "description": "List of allowed campaign time windows",
+            "items": {
+              "$ref": "#/components/schemas/TimeWindow"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "Campaign status"
+          }
+        }
+      },
+      "DeviceFirmwareUpgrade": {
+        "required": [
+          "accountName",
+          "campaignId",
+          "deviceId",
+          "reason",
+          "startDate",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string",
+            "description": "Device identifier"
+          },
+          "campaignId": {
+            "type": "string",
+            "description": "Campaign identifier"
+          },
+          "accountName": {
+            "type": "string",
+            "description": "Account identifier"
+          },
+          "firmwareName": {
+            "type": "string",
+            "description": "Firmware name"
+          },
+          "firmwareFrom": {
+            "type": "string",
+            "description": "Old firmware version"
+          },
+          "firmwareTo": {
+            "type": "string",
+            "description": "New firmware version"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Firmware upgrade start date",
+            "format": "date"
+          },
+          "status": {
+            "type": "string",
+            "description": "Firmware upgrade status"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Software upgrade result reason"
+          },
+          "reportUpdatedTime": {
+            "type": "string",
+            "description": "Report updated time"
+          }
+        }
+      },
+      "DeviceIMEI": {
+        "required": [
+          "deviceList"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceList": {
+            "type": "array",
+            "description": "device IMEI list",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "FirmwareIMEI": {
+        "required": [
+          "deviceList"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceList": {
+            "maxItems": 1000,
+            "type": "array",
+            "description": "device IMEI list",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "DeviceFirmwareList": {
+        "required": [
+          "accountName"
+        ],
+        "type": "object",
+        "properties": {
+          "accountName": {
+            "type": "string",
+            "description": "Account name"
+          },
+          "deviceFirmwarVersionList": {
+            "type": "array",
+            "description": "List of device & firmware",
+            "items": {
+              "$ref": "#/components/schemas/DeviceFirmwareVersion"
+            }
+          }
+        }
+      },
+      "DeviceFirmwareVersion": {
+        "required": [
+          "deviceId",
+          "firmwareVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "result"
+          },
+          "reason": {
+            "type": "string",
+            "description": "result reason"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Device IMEI"
+          },
+          "firmwareVersion": {
+            "type": "string",
+            "description": "Device Firmware Version"
+          },
+          "firmwareVersionUpdateTime": {
+            "type": "string",
+            "description": "Firmware Version Update Time",
+            "format": "date-time"
+          }
+        }
+      },
+      "CampaignHistory": {
+        "required": [
+          "campaignList",
+          "hasMoreData"
+        ],
+        "type": "object",
+        "properties": {
+          "hasMoreData": {
+            "type": "boolean",
+            "description": "Has more report flag"
+          },
+          "lastSeenCampaignId": {
+            "type": "string",
+            "description": "Campaign identifier"
+          },
+          "campaignList": {
+            "type": "array",
+            "description": "Firmware upgrade list",
+            "items": {
+              "$ref": "#/components/schemas/CampaignMetaInfo"
+            }
+          }
+        }
+      },
+      "CampaignMetaInfo": {
+        "required": [
+          "accountName",
+          "endDate",
+          "id",
+          "make",
+          "model",
+          "startDate",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "accountName": {
+            "type": "string",
+            "description": "Account identifier"
+          },
+          "id": {
+            "type": "string",
+            "description": "Campaign identifier"
+          },
+          "campaignName": {
+            "type": "string",
+            "description": "Campaign name"
+          },
+          "firmwareName": {
+            "type": "string",
+            "description": "firmware name"
+          },
+          "firmwareFrom": {
+            "type": "string",
+            "description": "Old firmware version"
+          },
+          "firmwareTo": {
+            "type": "string",
+            "description": "New software version"
+          },
+          "protocol": {
+            "type": "string",
+            "default": "LWM2M",
+            "enum": [
+              "LWM2M",
+              "OMD-DM"
+            ]
+          },
+          "make": {
+            "type": "string",
+            "description": "Device make"
+          },
+          "model": {
+            "type": "string",
+            "description": "Device model"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Campaign start date",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Campaign end date",
+            "format": "date"
+          },
+          "campaignTimeWindowList": {
+            "type": "array",
+            "description": "List of allowed campaign time windows",
+            "items": {
+              "$ref": "#/components/schemas/TimeWindow"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "Firmware upgrade status"
+          }
+        }
+      },
+      "DeviceListResponse": {
+        "required": [
+          "accountName",
+          "deviceCount",
+          "deviceList"
+        ],
+        "type": "object",
+        "properties": {
+          "accountName": {
+            "type": "string",
+            "description": "Account name"
+          },
+          "deviceCount": {
+            "type": "integer",
+            "description": "Total device count"
+          },
+          "deviceList": {
+            "maxItems": 1000,
+            "type": "array",
+            "description": "List of devices with id in IMEI",
+            "items": {
+              "$ref": "#/components/schemas/DeviceListStatus"
+            }
+          }
+        }
+      },
+      "DeviceListStatus": {
+        "required": [
+          "deviceId"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string",
+            "description": "Device IMEI"
+          },
+          "requestStatus": {
+            "type": "string",
+            "description": "Success or failure"
+          },
+          "resultReason": {
+            "type": "string",
+            "description": "Result reason"
+          },
+          "mdn": {
+            "type": "string",
+            "description": "MDN"
+          },
+          "model": {
+            "type": "string",
+            "description": "Device model"
+          },
+          "make": {
+            "type": "string",
+            "description": "Device make"
+          },
+          "firmware": {
+            "type": "string",
+            "description": "Device firmware version"
+          },
+          "fotaEligible": {
+            "type": "string",
+            "description": "Device fota capable LWM2M, OMD-DM, HTTP or NONE"
+          },
+          "status": {
+            "type": "string",
+            "description": "Device status"
+          },
+          "licenseAssigned": {
+            "type": "boolean",
+            "description": "License assigned device"
+          },
+          "protocol": {
+            "type": "string",
+            "default": "LWM2M",
+            "enum": [
+              "LWM2M",
+              "OMD-DM",
+              "HTTP"
+            ]
+          },
+          "softwareList": {
+            "maxItems": 1000,
+            "type": "array",
+            "description": "List of sofware",
+            "items": {
+              "$ref": "#/components/schemas/SoftwareInfo"
+            }
+          },
+          "fileList": {
+            "maxItems": 1000,
+            "type": "array",
+            "description": "List of files",
+            "items": {
+              "$ref": "#/components/schemas/SoftwareInfo"
+            }
+          },
+          "createTime": {
+            "type": "string",
+            "description": "The date and time of when the device is created",
+            "format": "date-time"
+          },
+          "statusTime": {
+            "type": "string",
+            "description": "The date and time of when the device firmware or software is updated",
+            "format": "date-time"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "The date and time of when the device is updated",
+            "format": "date-time"
+          },
+          "refreshTime": {
+            "type": "string",
+            "description": "The date and time of when the device is refreshed",
+            "format": "date-time"
+          },
+          "lastConnectionTime": {
+            "type": "string",
+            "description": "The date and time of when the device reachability is checked",
+            "format": "date-time"
+          }
+        }
+      },
+      "UpdateDeviceFirmwareVersionResp": {
+        "required": [
+          "accountName",
+          "requestId"
+        ],
+        "type": "object",
+        "properties": {
+          "accountName": {
+            "type": "string",
+            "description": "Account identifier"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "Request identifier"
+          }
+        }
+      },
+      "Campaign": {
+        "required": [
+          "accountName",
+          "endDate",
+          "id",
+          "make",
+          "model",
+          "protocol",
+          "startDate",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Upgrade identifier"
+          },
+          "accountName": {
+            "type": "string",
+            "description": "Account identifier"
+          },
+          "campaignName": {
+            "type": "string",
+            "description": "Campaign name"
+          },
+          "firmwareName": {
+            "type": "string",
+            "description": "firmware name"
+          },
+          "firmwareFrom": {
+            "type": "string",
+            "description": "Old firmware version"
+          },
+          "firmwareTo": {
+            "type": "string",
+            "description": "New firmware version"
+          },
+          "protocol": {
+            "type": "string",
+            "default": "LWM2M"
+          },
+          "make": {
+            "type": "string",
+            "description": "Applicable make"
+          },
+          "model": {
+            "type": "string",
+            "description": "Applicable model"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Campaign start date",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Campaign end date",
+            "format": "date"
+          },
+          "campaignTimeWindowList": {
+            "type": "array",
+            "description": "List of allowed campaign time windows",
+            "items": {
+              "$ref": "#/components/schemas/TimeWindow"
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "Firmware upgrade status"
+          }
+        }
+      },
+      "CallbackRequest": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Callback Url for an subscribed service"
+          }
+        }
+      },
+      "CallbackResp": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Callback Url"
+          }
+        }
+      },
+      "CallbackSummary": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Callback Url for an subscribed service"
+          }
+        }
+      },
+      "FirmwarePackage": {
+        "required": [
+          "firmwareFrom",
+          "firmwareName",
+          "firmwareTo",
+          "launchDate",
+          "make",
+          "model",
+          "protocol",
+          "releaseNote"
+        ],
+        "type": "object",
+        "properties": {
+          "firmwareName": {
+            "type": "string",
+            "description": "Firmware name"
+          },
+          "firmwareFrom": {
+            "type": "string",
+            "description": "Firmware from version"
+          },
+          "firmwareTo": {
+            "type": "string",
+            "description": "Firmware to version"
+          },
+          "launchDate": {
+            "type": "string",
+            "description": "Firmware launch date",
+            "format": "date-time"
+          },
+          "releaseNote": {
+            "type": "string",
+            "description": "Firmware release note"
+          },
+          "model": {
+            "type": "string",
+            "description": "Firmware applicable device model"
+          },
+          "make": {
+            "type": "string",
+            "description": "Firmware applicable device make"
+          },
+          "protocol": {
+            "type": "string",
+            "default": "LWM2M",
+            "enum": [
+              "LWM2M",
+              "OMD-DM"
+            ]
+          }
+        }
+      },
+      "CampaignDevice": {
+        "required": [
+          "deviceList",
+          "hasMoreData",
+          "maxPageSize"
+        ],
+        "type": "object",
+        "properties": {
+          "totalDevice": {
+            "type": "integer",
+            "description": "Total device count"
+          },
+          "hasMoreData": {
+            "type": "boolean",
+            "description": "Has more report flag"
+          },
+          "lastSeenDeviceId": {
+            "type": "string",
+            "description": "Device identifier"
+          },
+          "maxPageSize": {
+            "type": "integer",
+            "description": "Maximum page size"
+          },
+          "deviceList": {
+            "type": "array",
+            "description": "List of devices with id in IMEI",
+            "items": {
+              "$ref": "#/components/schemas/DeviceStatus"
+            }
+          }
+        }
+      },
+      "AccountDeviceList": {
+        "required": [
+          "accountName",
+          "deviceList",
+          "hasMoreData",
+          "maxPageSize"
+        ],
+        "type": "object",
+        "properties": {
+          "accountName": {
+            "type": "string",
+            "description": "Account name"
+          },
+          "hasMoreData": {
+            "type": "boolean",
+            "description": "has more device flag"
+          },
+          "lastSeenDeviceId": {
+            "type": "string",
+            "description": "Last seen device identifier"
+          },
+          "maxPageSize": {
+            "type": "integer",
+            "description": "Maximum page size"
+          },
+          "deviceList": {
+            "type": "array",
+            "description": "Account device list",
+            "items": {
+              "$ref": "#/components/schemas/AccountDevice"
+            }
+          }
+        }
+      },
+      "AccountDevice": {
+        "required": [
+          "deviceId",
+          "firmware",
+          "fotaEligible",
+          "licenseAssigned",
+          "make",
+          "mdn",
+          "model",
+          "protocol",
+          "softwareList",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string",
+            "description": "Device identifier"
+          },
+          "mdn": {
+            "type": "string",
+            "description": "MDN"
+          },
+          "model": {
+            "type": "string",
+            "description": "Device model"
+          },
+          "make": {
+            "type": "string",
+            "description": "Device make"
+          },
+          "firmware": {
+            "type": "string",
+            "description": "Device firmware version"
+          },
+          "fotaEligible": {
+            "type": "string",
+            "description": "Device fota capable LWM2M, OMD-DM, HTTP or NONE"
+          },
+          "status": {
+            "type": "string",
+            "description": "Device status"
+          },
+          "licenseAssigned": {
+            "type": "boolean",
+            "description": "License assigned device"
+          },
+          "protocol": {
+            "type": "string",
+            "default": "LWM2M",
+            "enum": [
+              "LWM2M",
+              "OMD-DM",
+              "HTTP"
+            ]
+          },
+          "softwareList": {
+            "type": "array",
+            "description": "List of sofware",
+            "items": {
+              "$ref": "#/components/schemas/SoftwareInfo"
+            }
+          },
+          "fileList": {
+            "type": "array",
+            "description": "List of files",
+            "items": {
+              "$ref": "#/components/schemas/SoftwareInfo"
+            }
+          },
+          "createTime": {
+            "type": "string",
+            "description": "The date and time of when the device is created",
+            "format": "date-time"
+          },
+          "upgradeTime": {
+            "type": "string",
+            "description": "The date and time of when the device firmware or software is updated",
+            "format": "date-time"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "The date and time of when the device is updated",
+            "format": "date-time"
+          },
+          "refreshTime": {
+            "type": "string",
+            "description": "The date and time of when the device is refreshed",
+            "format": "date-time"
+          }
+        }
+      },
+      "SoftwareInfo": {
+        "required": [
+          "name",
+          "upgradeTime",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Software name"
+          },
+          "version": {
+            "type": "string",
+            "description": "Software version"
+          },
+          "upgradeTime": {
+            "type": "string",
+            "description": "Upgrade time"
+          }
+        }
+      },
+      "DeviceStatus": {
+        "required": [
+          "deviceId",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string",
+            "description": "Device IMEI"
+          },
+          "status": {
+            "type": "string",
+            "description": "Success or failure"
+          },
+          "resultReason": {
+            "type": "string",
+            "description": "Result reason"
+          },
+          "updatedTime": {
+            "type": "string",
+            "description": "Updated Time",
+            "format": "date-time"
+          },
+          "recentAttemptTime": {
+            "type": "string",
+            "description": "the most recent attempt Time",
+            "format": "date-time"
+          },
+          "nextAttemptTime": {
+            "type": "string",
+            "description": "next attempt Time",
+            "format": "date-time"
+          }
+        }
+      },
+      "Success": {
+        "required": [
+          "success"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Error": {
+        "required": [
+          "errorCode",
+          "errorMessage"
+        ],
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string"
+          },
+          "errorMessage": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
