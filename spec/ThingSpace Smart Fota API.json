@@ -11,18 +11,18 @@
   },
   "x-roles": [
     {
-      "name": "Public Endpoints",
+      "name": "Private Endpoints",
       "id": "admin",
       "tags": [
-        "pet"
+        "admin"
       ],
-      "description": "This role only allows endpoints that should be visible to the public."
+      "description": "This role only allows endpoints that should be visible to the private."
     },
     {
-      "name": "Private Endpoints",
+      "name": "Public Endpoints",
       "id": "user",
       "tags": [
-        "pri"
+        "user"
       ],
       "description": "This role only allows endpoints that should be visible to the public."
     }
