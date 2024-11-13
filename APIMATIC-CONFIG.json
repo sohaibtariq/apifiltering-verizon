@@ -1,5 +1,5 @@
 {
-  "OpenAPIDirectoryPaths": [ "./spec"
+  "OpenAPIDirectoryPaths": [ "spec"
   ]
 }
 
