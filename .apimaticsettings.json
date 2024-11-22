@@ -1,4 +1,4 @@
 {
-   "OpenAPIDefinitionPaths": [ "spec"]
+   "OpenAPIDefinitionPaths": [ "spec/ThingSpace Smart Fota API.json"]
 }
 
