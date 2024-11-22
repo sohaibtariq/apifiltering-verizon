@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "ThingSpace Smart FOTA API",
+    "title": "ThingSpace Smart FOTA APIs",
     "license": {
       "name": "Verizon Terms of Service",
       "url": "https://thingspace.verizon.com/legal/terms-of-service.html"
